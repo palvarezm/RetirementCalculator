@@ -1,6 +1,7 @@
 package com.palvarezm.retirementcalculator
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -24,13 +25,20 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        val future = Crashes.hasCrashedInLastSession()
+        future.thenAccept {
+            if (it){
+                Toast.makeText(this, "Oops! Sorry about that!", Toast.LENGTH_LONG).show()
+            }
+        }
+
         var time: String
         val properties = HashMap<String, String>()
         binding.btnThrowError.setOnClickListener {
-            //Crashes.generateTestCrash()
             time = Date().toString()
             properties.put("Time: ", time)
             Analytics.trackEvent("Main button clicked", properties)
+            Crashes.generateTestCrash()
         }
     }
 }
